@@ -10,8 +10,8 @@ global s
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.10"          # Build date: Nov. 12, 2020
-protocolVersion = 10        # Do not change! Server and client protocol versions must be the same.
+version = "0.1.11"          # Build date: Nov. 12, 2020
+protocolVersion = 11        # Do not change! Server and client protocol versions must be the same.
 
 print("Chat Client v" + str(version))
 
@@ -43,7 +43,7 @@ while True:
         if serverProtocolVersion == protocolVersion:
             print("Connected to the server with identification \"" + serverID + "\"")
             global cooldown
-            cooldown = int(cooldownToString)
+            cooldown = float(cooldownToString)
             if cooldown != 0:
                 print("Cooldown for this server is " + str(cooldown) + " seconds")
             else:

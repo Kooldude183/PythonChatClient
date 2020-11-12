@@ -6,8 +6,8 @@ HEADER_LENGTH = 10
 
 IP = "0.0.0.0"
 PORT = 25000
-version = "0.1.10"                    # Build date: Nov. 12, 2020
-protocolVersion = 10                  # Server and client protocol version must match
+version = "0.1.11"                    # Build date: Nov. 12, 2020
+protocolVersion = 11                  # Server and client protocol version must match
 
 serverID = "server"     # The server ID shows on clients when connecting to the server
 cooldown = 0                         # Cooldown in seconds up to 3 digits. Set to 0 to disable. This cooldown is used for all clients connected to this server.
