@@ -1,3 +1,5 @@
+# GitHub: https://github.com/Kooldude183/PythonChatClient
+
 from datetime import time
 import socket
 from socket import error
@@ -12,7 +14,7 @@ gui = tk.Tk()
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.11"
+version = "0.1.11"    # Build date: Nov. 12, 2020
 protocolVersion = 11  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
@@ -57,8 +59,11 @@ while True:
         if serverProtocolVersion == protocolVersion:
             print("Connected to the server with identification \"" + serverID + "\"")
             global cooldown
-            cooldown = int(cooldownToString)
-            print("Cooldown for this server is " + str(cooldown) + " seconds")
+            cooldown = float(cooldownToString)
+            if cooldown != 0:
+                print("Cooldown for this server is " + str(cooldown) + " seconds")
+            else:
+                print("Cooldown for this server is disabled")
             break
         elif serverProtocolVersion > protocolVersion:
             print("Unable to connect to the specified server.")
@@ -83,11 +88,12 @@ print("Type your message, then press 'Enter' to send.")
 
 def SendMsg():
     while True:
-        msg = input()
+        msg = input("> ")
         if msg:
             msg = msg.encode("utf-8")
             msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
             s.send(msg_header + msg)
+        time.sleep(cooldown)
 
 def ReceiveMsg():
     while True:
