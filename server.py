@@ -1,3 +1,5 @@
+# GitHub: https://github.com/Kooldude183/PythonChatClient
+
 import socket
 import select
 HEADER_LENGTH = 10
