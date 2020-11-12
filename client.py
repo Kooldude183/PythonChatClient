@@ -8,8 +8,8 @@ global s
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.6"          # Build date: Nov. 11, 2020
-protocolVersion = 8        # Do not change! Server and client protocol versions must be the same.
+version = "0.1.11"          # Build date: Nov. 11, 2020
+protocolVersion = 10        # Do not change! Server and client protocol versions must be the same.
 
 print("Chat Client v" + str(version))
 
