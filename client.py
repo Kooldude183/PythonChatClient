@@ -5,48 +5,58 @@ import time
 import threading
 import errno
 global s
+import tkinter as tk
+from functools import partial
+gui = tk.Tk()
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.11"          # Build date: Nov. 11, 2020
-protocolVersion = 10        # Do not change! Server and client protocol versions must be the same.
+version = "0.1.11"
+protocolVersion = 11  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
 
-print("Enter a Username then press 'Enter':")
-username = input().encode("utf-8")
-username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
-while True:
-    print("Type 'main' to use the official server, or 'other' to manually enter an IP address, then press 'Enter':")
-    servertype = input()
-    if servertype == "main":
-        serverip = "104.156.229.228"
-        break
-    elif servertype == "other": 
-        print("Enter Server IP Address:")
-        serverip = input()
-        break
-    else:
-        print("Invalid response.")
 
-print("----------------------------------------")
+
+def setUsername():
+    global username
+    global username_header
+    username = usernametext.get().encode("utf-8")
+    username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
+
+    gui.destroy()
+
+usernametext = tk.Entry()
+usernametext.pack()
+usernamebutton = tk.Button(gui, text="Set", command= setUsername)
+usernamebutton.pack()
+
+gui.mainloop()
+
+def setServerMain():
+    global serverip
+    serverip = "104.156.229.228"
+    gui.destroy()
+
+gui = tk.Tk()
+
+serverbutton = tk.Button(gui, text="Main", command=setServerMain)
+serverbutton.pack()
+
+gui.mainloop()
+
 print("Connecting to the server...")
 
 while True:
     try:
         s.connect((serverip, 25000))
         s.send(username_header + username)
-        pvReceive = s.recv(4)
-        serverID = s.recv(128).decode("utf-8")
-        motd = s.recv(512).decode("utf-8")
-        cooldownReceive = s.recv(3)
-        pvToString = pvReceive.decode("utf-8")
+        pvToString, serverID, cooldownToString = [str(i) for i in s.recv(1024).decode('utf-8').split('\n')]
         serverProtocolVersion = int(pvToString)
         if serverProtocolVersion == protocolVersion:
             print("Connected to the server with identification \"" + serverID + "\"")
-            print(motd)
             global cooldown
-            cooldownToString = cooldownReceive.decode("utf-8")
             cooldown = int(cooldownToString)
             print("Cooldown for this server is " + str(cooldown) + " seconds")
             break
