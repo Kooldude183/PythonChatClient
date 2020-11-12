@@ -48,6 +48,7 @@ serverbutton.pack()
 
 gui.mainloop()
 
+print("----------------------------------------")
 print("Connecting to the server...")
 
 while True:
