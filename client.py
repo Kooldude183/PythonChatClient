@@ -1,5 +1,3 @@
-# GitHub: https://github.com/Kooldude183/PythonChatClient
-
 from datetime import time
 import socket
 from socket import error
@@ -7,31 +5,47 @@ import time
 import threading
 import errno
 global s
+import tkinter as tk
+from functools import partial
+gui = tk.Tk()
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.11"          # Build date: Nov. 12, 2020
-protocolVersion = 11        # Do not change! Server and client protocol versions must be the same.
+version = "0.1.3"
+protocolVersion = 10  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
 
-print("Enter a Username then press 'Enter':")
-username = input().encode("utf-8")
-username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
-while True:
-    print("Type 'main' to use the official server, or 'other' to manually enter an IP address, then press 'Enter':")
-    servertype = input()
-    if servertype == "main":
-        serverip = "104.156.229.228"
-        break
-    elif servertype == "other": 
-        print("Enter Server IP Address:")
-        serverip = input()
-        break
-    else:
-        print("Invalid response.")
 
-print("----------------------------------------")
+
+def setUsername():
+    global username
+    global username_header
+    username = usernametext.get().encode("utf-8")
+    username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
+
+    gui.destroy()
+
+usernametext = tk.Entry()
+usernametext.pack()
+usernamebutton = tk.Button(gui, text="Set", command= setUsername)
+usernamebutton.pack()
+
+gui.mainloop()
+
+def setServerMain():
+    global serverip
+    serverip = "104.156.229.228"
+    gui.destroy()
+
+gui = tk.Tk()
+
+serverbutton = tk.Button(gui, text="Main", command=setServerMain)
+serverbutton.pack()
+
+gui.mainloop()
+
 print("Connecting to the server...")
 
 while True:
@@ -43,11 +57,8 @@ while True:
         if serverProtocolVersion == protocolVersion:
             print("Connected to the server with identification \"" + serverID + "\"")
             global cooldown
-            cooldown = float(cooldownToString)
-            if cooldown != 0:
-                print("Cooldown for this server is " + str(cooldown) + " seconds")
-            else:
-                print("Cooldown for this server is disabled")
+            cooldown = int(cooldownToString)
+            print("Cooldown for this server is " + str(cooldown) + " seconds")
             break
         elif serverProtocolVersion > protocolVersion:
             print("Unable to connect to the specified server.")
@@ -68,16 +79,15 @@ while True:
         exit()
 
 print("----------------------------------------")
-print("Type your message, then press 'Enter' to send.")
 
 def SendMsg():
+    msg = entry.get()
     while True:
-        msg = input("> ")
         if msg:
             msg = msg.encode("utf-8")
             msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
             s.send(msg_header + msg)
-        time.sleep(cooldown)
+gui = tk.Tk()
 
 def ReceiveMsg():
     while True:
@@ -94,7 +104,7 @@ def ReceiveMsg():
                 msg_header = s.recv(HEADER_LENGTH)
                 msg_length = int(msg_header.decode("utf-8").strip())
                 msg = s.recv(msg_length).decode("utf-8")
-                print(f"{usernamedecode}: {msg}")
+                print(msg, usernamedecode)
         except IOError as e:
             if errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
                 print("The following IO exception has occurred: {}".format(str(e)))
@@ -107,6 +117,18 @@ def ReceiveMsg():
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
             exit()
+
+
+entry = tk.Entry()
+send = tk.Button(gui, text="Send", command=SendMsg)
+entry.pack()
+send.pack()
+
+
+gui.mainloop()
+
+
+
 
 sendmessage = threading.Thread(target=SendMsg)
 sendmessage.start()
