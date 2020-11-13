@@ -7,32 +7,83 @@ import time
 import threading
 import errno
 global s
+import tkinter as tk
+from tkinter import *
+from functools import partial
+gui = tk.Tk()
+gui.geometry("500x200")
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.11"          # Build date: Nov. 12, 2020
-protocolVersion = 11        # Do not change! Server and client protocol versions must be the same.
+version = "0.1.11"    # Build date: Nov. 12, 2020
+protocolVersion = 11  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
 
-print("Enter a Username then press 'Enter':")
-username = input().encode("utf-8")
-username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
-while True:
-    print("Type 'main' to use the official server, or 'other' to manually enter an IP address, then press 'Enter':")
-    servertype = input()
-    if servertype == "main":
-        serverip = "104.156.229.228"
-        break
-    elif servertype == "other": 
-        print("Enter Server IP Address:")
-        serverip = input()
-        break
-    else:
-        print("Invalid response.")
+def setUsername():
+    global username
+    global username_header
+    username = usernametext.get().encode("utf-8")
+    username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
+
+    gui.destroy()
+
+serverselectlbl = tk.Label(gui, text = "Input Username", font = ("Calibri", 16, "bold"))
+serverselectlbl.pack()
+usernametext = tk.Entry()
+usernametext.pack()
+usernamebutton = tk.Button(gui, text="Login", command=setUsername, height = 1, width = 15)
+usernamebutton.pack()
+
+gui.mainloop()
+
+try:
+    username_header
+except Exception as e:
+    print("Username was not specified! Please enter a username.")
+    print("Program will terminate in 5 seconds...")
+    time.sleep(5)
+    exit()
+
+def setServerMain():
+    global serverip
+    serverip = "104.156.229.228"
+    gui.destroy()
+
+def connectToOtherServer(address):
+    global serverip
+    serverip = address
+    gui.destroy()
+
+def setOtherServer():
+    ipaddrfield = tk.Entry()
+    ipaddrfield.pack()
+    connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15)
+    connectbutton.pack()
+
+gui = tk.Tk()
+gui.geometry("500x200")
+
+serverselectlbl = tk.Label(gui, text = "Select Server", font = ("Calibri", 16, "bold"))
+serverselectlbl.pack()
+mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15)
+mainserverbutton.pack()
+otherserverbutton = tk.Button(gui, text="Enter IP Address", command=setOtherServer, height = 1, width = 15)
+otherserverbutton.pack()
+
+gui.mainloop()
 
 print("----------------------------------------")
 print("Connecting to the server...")
+
+try:
+    serverip
+except Exception as e:
+    print("Server IP address was not specified! Please enter an IP address.")
+    print("Program will terminate in 5 seconds...")
+    time.sleep(5)
+    exit()
 
 while True:
     try:
