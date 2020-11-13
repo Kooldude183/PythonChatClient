@@ -8,27 +8,33 @@ import threading
 import errno
 global s
 import tkinter as tk
-
 import requests
+import os
+
+version = "0.1.16"    # Build date: Nov. 13, 2020
+protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 #AUTOUPDATER
-
-r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
-
-text_file = open("client.py", "w")
-
-text_file.write(r.text)
-
-text_file.close()
+file = os.path.basename(__file__)
+filename, ext = os.path.splitext(file)
+if ext == ".py":
+    r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
+    text_file = open("client.py", "w")
+    text_file.write(r.text)
+    text_file.close()
+elif ext == ".exe":
+    r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
+    text_file = open("client.exe", "w")
+    text_file.write(r.text)
+    text_file.close()
+else:
+    print("Unsupported file type. Unable to start program.")
+    print("Program will terminate in 5 seconds...")
+    time.sleep(5)
+    exit()
 
 gui = tk.Tk()
 gui.geometry("500x200")
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-HEADER_LENGTH = 10
-
-version = "0.1.15"    # Build date: Nov. 13, 2020
-protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
 
@@ -91,6 +97,9 @@ gui.mainloop()
 
 print("----------------------------------------")
 print("Connecting to the server...")
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+HEADER_LENGTH = 10
 
 try:
     serverip
