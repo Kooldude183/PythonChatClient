@@ -15,6 +15,7 @@ version = "0.1.16"    # Build date: Nov. 13, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 #AUTOUPDATER
+print("Running auto-updater...")
 file = os.path.basename(__file__)
 filename, ext = os.path.splitext(file)
 if ext == ".py":
