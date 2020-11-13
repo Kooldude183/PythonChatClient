@@ -16,7 +16,7 @@ gui.geometry("500x200")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.11"    # Build date: Nov. 12, 2020
+version = "0.1.12"    # Build date: Nov. 12, 2020
 protocolVersion = 11  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
