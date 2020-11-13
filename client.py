@@ -1,4 +1,3 @@
-
 # GitHub: https://github.com/Kooldude183/PythonChatClient
 
 from datetime import time
@@ -28,7 +27,7 @@ gui.geometry("500x200")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.13"    # Build date: Nov. 13, 2020
+version = "0.1.15"    # Build date: Nov. 13, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
@@ -69,14 +68,18 @@ def connectToOtherServer(address):
     gui.destroy()
 
 def setOtherServer():
-    ipaddrfield = tk.Entry()
-    ipaddrfield.pack()
-    connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15)
-    connectbutton.pack()
+    global buttonClicked
+    if buttonClicked == False:
+        ipaddrfield = tk.Entry()
+        ipaddrfield.pack()
+        connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15)
+        connectbutton.pack()
+        buttonClicked = True
 
 gui = tk.Tk()
 gui.geometry("500x200")
 
+buttonClicked = False
 serverselectlbl = tk.Label(gui, text = "Select Server", font = ("Calibri", 16, "bold"))
 serverselectlbl.pack()
 mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15)
