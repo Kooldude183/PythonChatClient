@@ -8,9 +8,7 @@ import threading
 import errno
 global s
 import tkinter as tk
-import esky
-
-
+#import esky
 
 gui = tk.Tk()
 gui.geometry("500x200")
@@ -18,8 +16,8 @@ gui.geometry("500x200")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
 
-version = "0.1.12"    # Build date: Nov. 12, 2020
-protocolVersion = 11  # Do not change! Server and client protocol versions must be the same. - Colin
+version = "0.1.13"    # Build date: Nov. 13, 2020
+protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 print("Chat Client v" + str(version))
 
@@ -104,7 +102,7 @@ while True:
             break
         elif serverProtocolVersion > protocolVersion:
             print("Unable to connect to the specified server.")
-            print("Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ".")
+            print("Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ". You can find the latest release here: https://github.com/Kooldude183/PythonChatClient/releases")
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
             exit()
