@@ -1,3 +1,5 @@
+# GitHub: https://github.com/Kooldude183/PythonChatClient
+
 from datetime import time
 import socket
 from socket import error
