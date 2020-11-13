@@ -19,12 +19,12 @@ file = os.path.basename(__file__)
 filename, ext = os.path.splitext(file)
 if ext == ".py":
     r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
-    text_file = open("client.py", "w")
+    text_file = open(file, "w")
     text_file.write(r.text)
     text_file.close()
 elif ext == ".exe":
     r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
-    text_file = open("client.exe", "w")
+    text_file = open(file, "w")
     text_file.write(r.text)
     text_file.close()
 else:
