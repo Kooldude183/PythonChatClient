@@ -1,3 +1,4 @@
+
 # GitHub: https://github.com/Kooldude183/PythonChatClient
 
 from datetime import time
@@ -8,7 +9,18 @@ import threading
 import errno
 global s
 import tkinter as tk
-#import esky
+
+import requests
+
+#AUTOUPDATER
+
+r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
+
+text_file = open("client.py", "w")
+
+text_file.write(r.text)
+
+text_file.close()
 
 gui = tk.Tk()
 gui.geometry("500x200")
