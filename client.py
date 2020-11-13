@@ -1,4 +1,4 @@
-# GitHub: https://github.com/Kooldude183/PythonChatClient placeholder
+# GitHub: https://github.com/Kooldude183/PythonChatClient
 
 from datetime import time
 import socket
