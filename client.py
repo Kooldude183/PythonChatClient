@@ -8,8 +8,10 @@ import threading
 import errno
 global s
 import tkinter as tk
-from tkinter import *
-from functools import partial
+import esky
+
+
+
 gui = tk.Tk()
 gui.geometry("500x200")
 
