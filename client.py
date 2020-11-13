@@ -76,7 +76,6 @@ def setOtherServer():
         connectbutton.pack()
         buttonClicked = True
 
-
 gui = tk.Tk()
 gui.geometry("500x200")
 
