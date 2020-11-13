@@ -30,7 +30,6 @@ clients = {}
 print(f"Server running on port {PORT}")
 
 # handles recieving messages
-# returns a dict with the header and data at their respective keys
 def receive_msg(client_socket):
     try:
         msg_header = client_socket.recv(HEADER_LENGTH)
@@ -39,8 +38,8 @@ def receive_msg(client_socket):
             return False
 
         message_length = int(msg_header.decode("utf-8").strip())
-        return {"header": msg_header, "data": client_socket.recv(message_length)}
 
+        return {"header": msg_header, "data": client_socket.recv(message_length)}
     except:
         return False
 
@@ -69,6 +68,12 @@ while True:
 
             # server notification message
             print("Connected to {} on IP {}".format(userconnected, client_address))
+
+            # send join notification to all clients
+            user = clients[client_socket]
+            for client_socket_2 in clients:
+                if client_socket_2 != client_socket:
+                    client_socket_2.send(user["header"] + user["data"] + f"{-1:<{HEADER_LENGTH}}".encode("utf-8"))
 
         # if notified socket is client
         else:
