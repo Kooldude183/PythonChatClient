@@ -10,6 +10,7 @@ global s
 import tkinter as tk
 import requests
 import os
+HEADER_LENGTH = 10
 
 version = "0.1.16"    # Build date: Nov. 13, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
@@ -100,7 +101,6 @@ print("----------------------------------------")
 print("Connecting to the server...")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-HEADER_LENGTH = 10
 
 try:
     serverip
