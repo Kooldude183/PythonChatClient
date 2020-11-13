@@ -1,5 +1,3 @@
-# GitHub: https://github.com/Kooldude183/PythonChatClient
-
 from datetime import time
 import socket
 from socket import error
@@ -53,13 +51,13 @@ def setServerMain():
 
 def connectToOtherServer(address):
     global serverip
-    serverip = address.get()
+    serverip = address
     gui.destroy()
 
 def setOtherServer():
     ipaddrfield = tk.Entry()
     ipaddrfield.pack()
-    connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield), height = 2, width = 15)
+    connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15)
     connectbutton.pack()
 
 gui = tk.Tk()
