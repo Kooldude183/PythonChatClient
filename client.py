@@ -6,10 +6,13 @@ from socket import error
 import time
 import threading
 import errno
+import sys
 global s
 import tkinter as tk
+from tkinter import *
 from functools import partial
 gui = tk.Tk()
+gui.geometry("500x200")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 HEADER_LENGTH = 10
@@ -19,8 +22,6 @@ protocolVersion = 11  # Do not change! Server and client protocol versions must 
 
 print("Chat Client v" + str(version))
 
-
-
 def setUsername():
     global username
     global username_header
@@ -29,9 +30,11 @@ def setUsername():
 
     gui.destroy()
 
+serverselectlbl = tk.Label(gui, text = "Input Username", font = ("Calibri", 16, "bold"))
+serverselectlbl.pack()
 usernametext = tk.Entry()
 usernametext.pack()
-usernamebutton = tk.Button(gui, text="Set", command= setUsername)
+usernamebutton = tk.Button(gui, text="Login", command=setUsername, height = 1, width = 15)
 usernamebutton.pack()
 
 gui.mainloop()
@@ -41,10 +44,26 @@ def setServerMain():
     serverip = "104.156.229.228"
     gui.destroy()
 
-gui = tk.Tk()
+def connectToOtherServer(address):
+    global serverip
+    serverip = address.get()
+    gui.destroy()
 
-serverbutton = tk.Button(gui, text="Main", command=setServerMain)
-serverbutton.pack()
+def setOtherServer():
+    ipaddrfield = tk.Entry()
+    ipaddrfield.pack()
+    connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield), height = 2, width = 15)
+    connectbutton.pack()
+
+gui = tk.Tk()
+gui.geometry("500x200")
+
+serverselectlbl = tk.Label(gui, text = "Select Server", font = ("Calibri", 16, "bold"))
+serverselectlbl.pack()
+mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15)
+mainserverbutton.pack()
+otherserverbutton = tk.Button(gui, text="Enter IP Address", command=setOtherServer, height = 1, width = 15)
+otherserverbutton.pack()
 
 gui.mainloop()
 
@@ -71,18 +90,18 @@ while True:
             print("Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ".")
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            exit()
+            sys.exit()
         elif serverProtocolVersion < protocolVersion:
             print("Unable to connect to the specified server.")
             print("The server you tried to connect to is outdated! Using protocol version " + str(protocolVersion) + " while server is on server protocol version " + str(serverProtocolVersion) + ".")
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            exit()
+            sys.exit()
     except Exception as err:
         print("Unable to connect to the specified server. The following exception has occurred: " + str(err))
         print("Program will terminate in 5 seconds...")
         time.sleep(5)
-        exit()
+        sys.exit()
 
 print("----------------------------------------")
 print("Type your message, then press 'Enter' to send.")
@@ -105,7 +124,7 @@ def ReceiveMsg():
                     print("The connection was closed by the server!")
                     print("Program will terminate in 5 seconds...")
                     time.sleep(5)
-                    exit()
+                    sys.exit()
                 username_length = int(username_header.decode("utf-8").strip())
                 usernamedecode = s.recv(username_length).decode("utf-8")
                 msg_header = s.recv(HEADER_LENGTH)
@@ -117,13 +136,13 @@ def ReceiveMsg():
                 print("The following IO exception has occurred: {}".format(str(e)))
                 print("Program will terminate in 5 seconds...")
                 time.sleep(5)
-                exit()
+                sys.exit()
             continue
         except Exception as e:
             print("The following exception has occurred: {}".format(str(e)))
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            exit()
+            sys.exit()
 
 sendmessage = threading.Thread(target=SendMsg)
 sendmessage.start()
