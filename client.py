@@ -156,6 +156,9 @@ def ReceiveMsg():
                 # leave / join message
                 elif(msg_length == -1):
                     print(f"{usernamedecode} has connected.")
+                
+                elif(msg_length == -2):
+                    print(f"{usernamedecode} has disconnected.")
 
         except IOError as e:
             if errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:

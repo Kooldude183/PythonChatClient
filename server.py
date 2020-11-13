@@ -80,6 +80,13 @@ while True:
             msg = receive_msg(notified_socket)
             if msg is False:
                 print("Connection closed on {}".format(clients[notified_socket]["data"].decode('utf-8')))
+
+                # send leave notification to all clients
+                user = clients[notified_socket]
+                for client_socket_2 in clients:
+                    if client_socket_2 != notified_socket:
+                        client_socket_2.send(user["header"] + user["data"] + f"{-2:<{HEADER_LENGTH}}".encode("utf-8"))
+
                 sockets_list.remove(notified_socket)
                 del clients[notified_socket]
                 continue
