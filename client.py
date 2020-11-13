@@ -6,7 +6,6 @@ from socket import error
 import time
 import threading
 import errno
-import sys
 global s
 import tkinter as tk
 from tkinter import *
@@ -39,6 +38,14 @@ usernamebutton.pack()
 
 gui.mainloop()
 
+try:
+    username_header
+except Exception as e:
+    print("Username was not specified! Please enter a username.")
+    print("Program will terminate in 5 seconds...")
+    time.sleep(5)
+    exit()
+
 def setServerMain():
     global serverip
     serverip = "104.156.229.228"
@@ -70,6 +77,14 @@ gui.mainloop()
 print("----------------------------------------")
 print("Connecting to the server...")
 
+try:
+    serverip
+except Exception as e:
+    print("Server IP address was not specified! Please enter an IP address.")
+    print("Program will terminate in 5 seconds...")
+    time.sleep(5)
+    exit()
+
 while True:
     try:
         s.connect((serverip, 25000))
@@ -90,18 +105,18 @@ while True:
             print("Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ".")
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            sys.exit()
+            exit()
         elif serverProtocolVersion < protocolVersion:
             print("Unable to connect to the specified server.")
             print("The server you tried to connect to is outdated! Using protocol version " + str(protocolVersion) + " while server is on server protocol version " + str(serverProtocolVersion) + ".")
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            sys.exit()
+            exit()
     except Exception as err:
         print("Unable to connect to the specified server. The following exception has occurred: " + str(err))
         print("Program will terminate in 5 seconds...")
         time.sleep(5)
-        sys.exit()
+        exit()
 
 print("----------------------------------------")
 print("Type your message, then press 'Enter' to send.")
@@ -124,7 +139,7 @@ def ReceiveMsg():
                     print("The connection was closed by the server!")
                     print("Program will terminate in 5 seconds...")
                     time.sleep(5)
-                    sys.exit()
+                    exit()
                 username_length = int(username_header.decode("utf-8").strip())
                 usernamedecode = s.recv(username_length).decode("utf-8")
                 msg_header = s.recv(HEADER_LENGTH)
@@ -136,13 +151,13 @@ def ReceiveMsg():
                 print("The following IO exception has occurred: {}".format(str(e)))
                 print("Program will terminate in 5 seconds...")
                 time.sleep(5)
-                sys.exit()
+                exit()
             continue
         except Exception as e:
             print("The following exception has occurred: {}".format(str(e)))
             print("Program will terminate in 5 seconds...")
             time.sleep(5)
-            sys.exit()
+            exit()
 
 sendmessage = threading.Thread(target=SendMsg)
 sendmessage.start()
