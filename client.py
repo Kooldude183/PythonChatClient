@@ -144,10 +144,19 @@ def ReceiveMsg():
                     exit()
                 username_length = int(username_header.decode("utf-8").strip())
                 usernamedecode = s.recv(username_length).decode("utf-8")
+
                 msg_header = s.recv(HEADER_LENGTH)
                 msg_length = int(msg_header.decode("utf-8").strip())
-                msg = s.recv(msg_length).decode("utf-8")
-                print(f"{usernamedecode}: {msg}")
+
+                # normal message
+                if(msg_length >= 0):
+                    msg = s.recv(msg_length).decode("utf-8")
+                    print(f"{usernamedecode}: {msg}")
+
+                # leave / join message
+                elif(msg_length == -1):
+                    print(f"{usernamedecode} has connected.")
+
         except IOError as e:
             if errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
                 print("The following IO exception has occurred: {}".format(str(e)))
