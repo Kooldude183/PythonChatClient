@@ -1,0 +1,11 @@
+*__pycache__
+*build
+client.spec
+server.spec
+convert.bat
+dist\client.py
+dist/client.py
+*.toc
+*.toc
+build/client/Analysis-00.toc
+build/client/Analysis-00.toc
