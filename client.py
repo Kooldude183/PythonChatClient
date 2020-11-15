@@ -16,24 +16,27 @@ version = "0.1.16"    # Build date: Nov. 13, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
 #AUTOUPDATER
-print("Running auto-updater...")
-file = os.path.basename(__file__)
-filename, ext = os.path.splitext(file)
-if ext == ".py":
-    r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
-    text_file = open(file, "w")
-    text_file.write(r.text)
-    text_file.close()
-elif ext == ".exe":
-    r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
-    text_file = open(file, "w")
-    text_file.write(r.text)
-    text_file.close()
-else:
-    print("Unsupported file type. Unable to start program.")
-    print("Program will terminate in 5 seconds...")
-    time.sleep(5)
-    exit()
+def AutoUpdater():
+    print("Running auto-updater...")
+    file = os.path.basename(__file__)
+    filename, ext = os.path.splitext(file)
+    if ext == ".py":
+        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
+        text_file = open(file, "w")
+        text_file.write(r.text)
+        text_file.close()
+    elif ext == ".exe":
+        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
+        text_file = open(file, "w")
+        text_file.write(r.text)
+        text_file.close()
+    else:
+        print("Unsupported file type. Unable to start program.")
+        print("Program will terminate in 5 seconds...")
+        time.sleep(5)
+        exit()
+
+AutoUpdater()
 
 gui = tk.Tk()
 gui.geometry("500x200")
