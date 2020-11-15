@@ -187,9 +187,10 @@ listBox.pack()
 listBox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=listBox.yview)
 
-Connect()
-
-gui.mainloop()
+connecttoserver = threading.Thread(target=Connect)
+connecttoserver.start()
+startchatgui = threading.Thread(target=gui.mainloop())
+startchatgui.start()
 
 exit()
 
