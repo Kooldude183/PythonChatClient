@@ -45,19 +45,24 @@ gui.geometry("500x200")
 
 print("Chat Client v" + str(version))
 
-def setUsername():
+def setUsername(event):
     global username
     global username_header
+    global localusername
     username = usernametext.get().encode("utf-8")
     username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
+    localusername = usernametext.get()
 
     gui.destroy()
 
-serverselectlbl = tk.Label(gui, text = "Input Username", font = ("Calibri", 16, "bold"))
-serverselectlbl.pack()
+gui.title("Username Entry")
+gui.bind("<Return>", setUsername)
+usernamelbl = tk.Label(gui, text="Input Username", font=("Calibri", 16, "bold"))
+usernamelbl.pack()
 usernametext = tk.Entry()
 usernametext.pack()
-usernamebutton = tk.Button(gui, text="Login", command=setUsername, height = 1, width = 15)
+usernamebutton = tk.Button(gui, text="Login", height = 1, width = 15)
+usernamebutton.bind("<Button-1>", setUsername)
 usernamebutton.pack()
 
 gui.mainloop()
@@ -93,6 +98,7 @@ gui = tk.Tk()
 gui.geometry("500x200")
 
 buttonClicked = False
+gui.title("Server Selection")
 serverselectlbl = tk.Label(gui, text = "Select Server", font = ("Calibri", 16, "bold"))
 serverselectlbl.pack()
 mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15)
@@ -102,81 +108,90 @@ otherserverbutton.pack()
 
 gui.mainloop()
 
-print("----------------------------------------")
-print("Connecting to the server...")
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-try:
-    serverip
-except Exception as e:
-    print("Server IP address was not specified! Please enter an IP address.")
-    print("Program will terminate in 5 seconds...")
-    time.sleep(5)
-    exit()
-
-while True:
-    try:
-        s.connect((serverip, 25000))
-        s.send(username_header + username)
-        pvToString, serverID, cooldownToString = [str(i) for i in s.recv(1024).decode('utf-8').split('\n')]
-        serverProtocolVersion = int(pvToString)
-        if serverProtocolVersion == protocolVersion:
-            print("Connected to the server with identification \"" + serverID + "\"")
-            global cooldown
-            cooldown = float(cooldownToString)
-            if cooldown != 0:
-                print("Cooldown for this server is " + str(cooldown) + " seconds")
-            else:
-                print("Cooldown for this server is disabled")
-            break
-        elif serverProtocolVersion > protocolVersion:
-            print("Unable to connect to the specified server.")
-            print("Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ". You can find the latest release here: https://github.com/Kooldude183/PythonChatClient/releases")
-            print("Program will terminate in 5 seconds...")
-            time.sleep(5)
-            exit()
-        elif serverProtocolVersion < protocolVersion:
-            print("Unable to connect to the specified server.")
-            print("The server you tried to connect to is outdated! Using protocol version " + str(protocolVersion) + " while server is on server protocol version " + str(serverProtocolVersion) + ".")
-            print("Program will terminate in 5 seconds...")
-            time.sleep(5)
-            exit()
-    except Exception as err:
-        print("Unable to connect to the specified server. The following exception has occurred: " + str(err))
-        print("Program will terminate in 5 seconds...")
-        time.sleep(5)
-        exit()
-
 gui = tk.Tk()
 gui.title("Chat")
 gui.configure(bg = "#DEE2E3")
 gui.geometry("650x400")
 
-def SendMsgGUI():
+def Connect():
+    listBox.insert(END, "----------------------------------------")
+    listBox.insert(END, "Connecting to the server...")
+
+    global s
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        serverip
+    except Exception as e:
+        listBox.insert(END, "Server IP address was not specified! Please enter an IP address.")
+        listBox.insert(END, "Program will terminate in 5 seconds...")
+        time.sleep(5)
+        exit()
+
+    while True:
+        try:
+            s.connect((serverip, 25000))
+            s.send(username_header + username)
+            pvToString, serverID, cooldownToString = [str(i) for i in s.recv(1024).decode('utf-8').split('\n')]
+            serverProtocolVersion = int(pvToString)
+            if serverProtocolVersion == protocolVersion:
+                listBox.insert(END, "Connected to the server with identification \"" + serverID + "\"")
+                global cooldown
+                cooldown = float(cooldownToString)
+                if cooldown != 0:
+                    listBox.insert(END, "Cooldown for this server is " + str(cooldown) + " seconds")
+                else:
+                    listBox.insert(END, "Cooldown for this server is disabled")
+                break
+            elif serverProtocolVersion > protocolVersion:
+                listBox.insert(END, "Unable to connect to the specified server.")
+                listBox.insert(END, "Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ". You can find the latest release here: https://github.com/Kooldude183/PythonChatClient/releases")
+                listBox.insert(END, "Program will terminate in 5 seconds...")
+                time.sleep(5)
+                exit()
+            elif serverProtocolVersion < protocolVersion:
+                listBox.insert(END, "Unable to connect to the specified server.")
+                listBox.insert(END, "The server you tried to connect to is outdated! Using protocol version " + str(protocolVersion) + " while server is on server protocol version " + str(serverProtocolVersion) + ".")
+                listBox.insert(END, "Program will terminate in 5 seconds...")
+                time.sleep(5)
+                exit()
+        except Exception as err:
+            listBox.insert(END, "Unable to connect to the specified server. The following exception has occurred: " + str(err))
+            listBox.insert(END, "Program will terminate in 5 seconds...")
+            time.sleep(5)
+            exit()
+
+    listBox.insert(END, "----------------------------------------")
+    listBox.insert(END, "Type your message, then click \"Send\" to send.")
+
+def SendMsgGUI(event):
     msg = entryBox.get()
     if msg:
         msg = msg.encode("utf-8")
         msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
         s.send(msg_header + msg)
+        listBox.insert(END, localusername + ": " + entryBox.get())
         entryBox.delete(0, "end")
     time.sleep(cooldown)
 
+gui.bind("<Return>", SendMsgGUI)
 listBox = Listbox(gui, height=600, width=375, font=("Calibri", 12))
 scrollbar = Scrollbar(gui)
 entryBox = tk.Entry(gui, text="", font=("Calibri", 12))
-sendButton = tk.Button(gui, text="Send", font=("Calibri", 12, "bold"), command=SendMsgGUI)
-scrollbar.pack(side=RIGHT, fill=Y)
+sendButton = tk.Button(gui, text="Send", font=("Calibri", 12, "bold"))
+sendButton.bind("<Button-1>", SendMsgGUI)
 sendButton.pack(side=BOTTOM, fill=X)
 entryBox.pack(side=BOTTOM, fill=X)
+scrollbar.pack(side=RIGHT, fill=Y)
 listBox.pack()
-
-
-
 listBox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=listBox.yview)
 
+Connect()
+
 gui.mainloop()
+
+exit()
 
 print("----------------------------------------")
 print("Type your message, then press 'Enter' to send.")
