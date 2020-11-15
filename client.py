@@ -6,8 +6,10 @@ from socket import error
 import time
 import threading
 import errno
+from tkinter.constants import END
 global s
 import tkinter as tk
+from tkinter import *
 import requests
 import os
 HEADER_LENGTH = 10
@@ -36,7 +38,7 @@ def AutoUpdater():
         time.sleep(5)
         exit()
 
-AutoUpdater()
+#AutoUpdater()
 
 gui = tk.Tk()
 gui.geometry("500x200")
@@ -146,17 +148,47 @@ while True:
         time.sleep(5)
         exit()
 
+gui = tk.Tk()
+gui.title("Chat")
+gui.configure(bg = "#DEE2E3")
+gui.geometry("650x400")
+
+def SendMsgGUI():
+    msg = entryBox.get()
+    if msg:
+        msg = msg.encode("utf-8")
+        msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
+        s.send(msg_header + msg)
+        entryBox.delete(0, "end")
+    time.sleep(cooldown)
+
+listBox = Listbox(gui, height=600, width=375, font=("Calibri", 12))
+scrollbar = Scrollbar(gui)
+entryBox = tk.Entry(gui, text="", font=("Calibri", 12))
+sendButton = tk.Button(gui, text="Send", font=("Calibri", 12, "bold"), command=SendMsgGUI)
+scrollbar.pack(side=RIGHT, fill=Y)
+sendButton.pack(side=BOTTOM, fill=X)
+entryBox.pack(side=BOTTOM, fill=X)
+listBox.pack()
+
+
+
+listBox.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=listBox.yview)
+
+gui.mainloop()
+
 print("----------------------------------------")
 print("Type your message, then press 'Enter' to send.")
 
-def SendMsg():
-    while True:
-        msg = input("> ")
-        if msg:
-            msg = msg.encode("utf-8")
-            msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
-            s.send(msg_header + msg)
-        time.sleep(cooldown)
+#def SendMsg():
+#    while True:
+#        msg = input("> ")
+#        if msg:
+#            msg = msg.encode("utf-8")
+#            msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
+#            s.send(msg_header + msg)
+#        time.sleep(cooldown)
 
 def ReceiveMsg():
     while True:
@@ -199,7 +231,9 @@ def ReceiveMsg():
             time.sleep(5)
             exit()
 
-sendmessage = threading.Thread(target=SendMsg)
-sendmessage.start()
-receivemessage = threading.Thread(target=ReceiveMsg)
-receivemessage.start()
+#sendmessage = threading.Thread(target=SendMsg)
+#sendmessage.start()
+#receivemessage = threading.Thread(target=ReceiveMsg)
+#receivemessage.start()
+
+ReceiveMsg()
