@@ -14,10 +14,17 @@ import requests
 import os
 HEADER_LENGTH = 10
 
-version = "0.1.16"    # Build date: Nov. 13, 2020
+version = "0.2.0"    # Build date: Nov. 15, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
 
-#AUTOUPDATER
+# Exit
+def exitProgram():
+    try:
+        gui.destroy()
+    finally:
+        exit()
+
+# Auto-updater
 def AutoUpdater():
     print("Running auto-updater...")
     file = os.path.basename(__file__)
@@ -36,7 +43,7 @@ def AutoUpdater():
         print("Unsupported file type. Unable to start program.")
         print("Program will terminate in 5 seconds...")
         time.sleep(5)
-        exit()
+        exitProgram()
 
 #AutoUpdater()
 
@@ -59,9 +66,9 @@ gui.title("Username Entry")
 gui.bind("<Return>", setUsername)
 usernamelbl = tk.Label(gui, text="Input Username", font=("Calibri", 16, "bold"))
 usernamelbl.pack()
-usernametext = tk.Entry()
+usernametext = tk.Entry(gui, font=("Calibri", 12))
 usernametext.pack()
-usernamebutton = tk.Button(gui, text="Login", height = 1, width = 15)
+usernamebutton = tk.Button(gui, text="Login", height = 1, width = 15, font=("Calibri", 12))
 usernamebutton.bind("<Button-1>", setUsername)
 usernamebutton.pack()
 
@@ -73,7 +80,7 @@ except Exception as e:
     print("Username was not specified! Please enter a username.")
     print("Program will terminate in 5 seconds...")
     time.sleep(5)
-    exit()
+    exitProgram()
 
 def setServerMain():
     global serverip
@@ -88,9 +95,9 @@ def connectToOtherServer(address):
 def setOtherServer():
     global buttonClicked
     if buttonClicked == False:
-        ipaddrfield = tk.Entry()
+        ipaddrfield = tk.Entry(font=("Calibri", 12))
         ipaddrfield.pack()
-        connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15)
+        connectbutton = tk.Button(gui, text="Connect", command=lambda: connectToOtherServer(ipaddrfield.get()), height = 2, width = 15, font=("Calibri", 12))
         connectbutton.pack()
         buttonClicked = True
 
@@ -101,9 +108,9 @@ buttonClicked = False
 gui.title("Server Selection")
 serverselectlbl = tk.Label(gui, text = "Select Server", font = ("Calibri", 16, "bold"))
 serverselectlbl.pack()
-mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15)
+mainserverbutton = tk.Button(gui, text="Main Server", command=setServerMain, height = 1, width = 15, font=("Calibri", 12))
 mainserverbutton.pack()
-otherserverbutton = tk.Button(gui, text="Enter IP Address", command=setOtherServer, height = 1, width = 15)
+otherserverbutton = tk.Button(gui, text="Enter IP Address", command=setOtherServer, height = 1, width = 15, font=("Calibri", 12))
 otherserverbutton.pack()
 
 gui.mainloop()
@@ -116,6 +123,7 @@ gui.geometry("650x400")
 def Connect():
     listBox.insert(END, "----------------------------------------")
     listBox.insert(END, "Connecting to the server...")
+    listBox.see("end")
 
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -125,8 +133,9 @@ def Connect():
     except Exception as e:
         listBox.insert(END, "Server IP address was not specified! Please enter an IP address.")
         listBox.insert(END, "Program will terminate in 5 seconds...")
+        listBox.see("end")
         time.sleep(5)
-        exit()
+        exitProgram()
 
     while True:
         try:
@@ -136,50 +145,108 @@ def Connect():
             serverProtocolVersion = int(pvToString)
             if serverProtocolVersion == protocolVersion:
                 listBox.insert(END, "Connected to the server with identification \"" + serverID + "\"")
+                listBox.see("end")
                 global cooldown
                 cooldown = float(cooldownToString)
                 if cooldown != 0:
                     listBox.insert(END, "Cooldown for this server is " + str(cooldown) + " seconds")
+                    listBox.see("end")
                 else:
                     listBox.insert(END, "Cooldown for this server is disabled")
+                    listBox.see("end")
                 break
             elif serverProtocolVersion > protocolVersion:
                 listBox.insert(END, "Unable to connect to the specified server.")
                 listBox.insert(END, "Your client is outdated! Using protocol version " + str(protocolVersion) + " instead of server protocol version " + str(serverProtocolVersion) + ". You can find the latest release here: https://github.com/Kooldude183/PythonChatClient/releases")
                 listBox.insert(END, "Program will terminate in 5 seconds...")
+                listBox.see("end")
                 time.sleep(5)
-                exit()
+                exitProgram()
             elif serverProtocolVersion < protocolVersion:
                 listBox.insert(END, "Unable to connect to the specified server.")
                 listBox.insert(END, "The server you tried to connect to is outdated! Using protocol version " + str(protocolVersion) + " while server is on server protocol version " + str(serverProtocolVersion) + ".")
                 listBox.insert(END, "Program will terminate in 5 seconds...")
+                listBox.see("end")
                 time.sleep(5)
-                exit()
+                exitProgram()
         except Exception as err:
             listBox.insert(END, "Unable to connect to the specified server. The following exception has occurred: " + str(err))
             listBox.insert(END, "Program will terminate in 5 seconds...")
+            listBox.see("end")
             time.sleep(5)
-            exit()
+            exitProgram()
 
     listBox.insert(END, "----------------------------------------")
-    listBox.insert(END, "Type your message, then click \"Send\" to send.")
+    listBox.insert(END, "Type your message, then click 'Send' or press 'Enter' to send.")
+    listBox.insert(END, localusername + " has connected.")
+    listBox.see("end")
 
-def SendMsgGUI(event):
+    ReceiveMsg()
+
+def SendMsg(event):
     msg = entryBox.get()
     if msg:
         msg = msg.encode("utf-8")
         msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
         s.send(msg_header + msg)
         listBox.insert(END, localusername + ": " + entryBox.get())
+        listBox.see("end")
         entryBox.delete(0, "end")
     time.sleep(cooldown)
 
-gui.bind("<Return>", SendMsgGUI)
+def ReceiveMsg():
+    while True:
+        try:
+            while True:
+                username_header = s.recv(HEADER_LENGTH)
+                if not len(username_header):
+                    listBox.insert(END, "The connection was closed by the server!")
+                    listBox.insert(END, "Program will terminate in 5 seconds...")
+                    listBox.see("end")
+                    time.sleep(5)
+                    exitProgram()
+                username_length = int(username_header.decode("utf-8").strip())
+                usernamedecode = s.recv(username_length).decode("utf-8")
+
+                msg_header = s.recv(HEADER_LENGTH)
+                msg_length = int(msg_header.decode("utf-8").strip())
+
+                # normal message
+                if(msg_length >= 0):
+                    msg = s.recv(msg_length).decode("utf-8")
+                    listBox.insert(END, f"{usernamedecode}: {msg}")
+                    listBox.see("end")
+
+                # leave / join message
+                elif(msg_length == -1):
+                    listBox.insert(END, f"{usernamedecode} has connected.")
+                    listBox.see("end")
+                
+                elif(msg_length == -2):
+                    listBox.insert(END, f"{usernamedecode} has disconnected.")
+                    listBox.see("end")
+
+        except IOError as e:
+            if errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
+                listBox.insert(END, "The following IO exception has occurred: {}".format(str(e)))
+                listBox.insert(END, "Program will terminate in 5 seconds...")
+                listBox.see("end")
+                time.sleep(5)
+                exitProgram()
+            continue
+        except Exception as e:
+            listBox.insert(END, "The following exception has occurred: {}".format(str(e)))
+            listBox.insert(END, "Program will terminate in 5 seconds...")
+            listBox.see("end")
+            time.sleep(5)
+            exitProgram()
+
+gui.bind("<Return>", SendMsg)
 listBox = Listbox(gui, height=600, width=375, font=("Calibri", 12))
 scrollbar = Scrollbar(gui)
 entryBox = tk.Entry(gui, text="", font=("Calibri", 12))
 sendButton = tk.Button(gui, text="Send", font=("Calibri", 12, "bold"))
-sendButton.bind("<Button-1>", SendMsgGUI)
+sendButton.bind("<Button-1>", SendMsg)
 sendButton.pack(side=BOTTOM, fill=X)
 entryBox.pack(side=BOTTOM, fill=X)
 scrollbar.pack(side=RIGHT, fill=Y)
@@ -192,64 +259,4 @@ connecttoserver.start()
 startchatgui = threading.Thread(target=gui.mainloop())
 startchatgui.start()
 
-exit()
-
-print("----------------------------------------")
-print("Type your message, then press 'Enter' to send.")
-
-#def SendMsg():
-#    while True:
-#        msg = input("> ")
-#        if msg:
-#            msg = msg.encode("utf-8")
-#            msg_header = f"{len(msg):<{HEADER_LENGTH}}".encode("utf-8")
-#            s.send(msg_header + msg)
-#        time.sleep(cooldown)
-
-def ReceiveMsg():
-    while True:
-        try:
-            while True:
-                username_header = s.recv(HEADER_LENGTH)
-                if not len(username_header):
-                    print("The connection was closed by the server!")
-                    print("Program will terminate in 5 seconds...")
-                    time.sleep(5)
-                    exit()
-                username_length = int(username_header.decode("utf-8").strip())
-                usernamedecode = s.recv(username_length).decode("utf-8")
-
-                msg_header = s.recv(HEADER_LENGTH)
-                msg_length = int(msg_header.decode("utf-8").strip())
-
-                # normal message
-                if(msg_length >= 0):
-                    msg = s.recv(msg_length).decode("utf-8")
-                    print(f"{usernamedecode}: {msg}")
-
-                # leave / join message
-                elif(msg_length == -1):
-                    print(f"{usernamedecode} has connected.")
-                
-                elif(msg_length == -2):
-                    print(f"{usernamedecode} has disconnected.")
-
-        except IOError as e:
-            if errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
-                print("The following IO exception has occurred: {}".format(str(e)))
-                print("Program will terminate in 5 seconds...")
-                time.sleep(5)
-                exit()
-            continue
-        except Exception as e:
-            print("The following exception has occurred: {}".format(str(e)))
-            print("Program will terminate in 5 seconds...")
-            time.sleep(5)
-            exit()
-
-#sendmessage = threading.Thread(target=SendMsg)
-#sendmessage.start()
-#receivemessage = threading.Thread(target=ReceiveMsg)
-#receivemessage.start()
-
-ReceiveMsg()
+exitProgram()
