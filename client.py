@@ -9,13 +9,18 @@ import errno
 from tkinter.constants import END
 global s
 import tkinter as tk
-from tkinter import *
+from tkinter import Listbox
+from tkinter import Scrollbar
+from tkinter import BOTTOM
+from tkinter import RIGHT
+from tkinter import X
+from tkinter import Y
 import requests
 import os
 HEADER_LENGTH = 10
 
-version = "0.2.0"    # Build date: Nov. 15, 2020
-protocolVersion = 12  # Do not change! Server and client protocol versions must be the same. - Colin
+version = "0.2.0 (Development)"    # Build date: Nov. 15, 2020
+protocolVersion = 12  # Do not change! Server and client protocol versions must be the same.
 
 # Exit
 def exitProgram():
@@ -71,6 +76,8 @@ usernametext.pack()
 usernamebutton = tk.Button(gui, text="Login", height = 1, width = 15, font=("Calibri", 12))
 usernamebutton.bind("<Button-1>", setUsername)
 usernamebutton.pack()
+guiversion = tk.Label(gui, text="Chat Client v" + str(version), font=("Calibri", 8, "bold"))
+guiversion.pack()
 
 gui.mainloop()
 
