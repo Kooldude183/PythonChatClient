@@ -1,0 +1,6 @@
+*__pycache__
+*build
+client.spec
+server.spec
+convert.bat
+dist\client.py
