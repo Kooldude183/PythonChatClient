@@ -19,7 +19,7 @@ import requests
 import os
 HEADER_LENGTH = 10
 
-version = "0.2.0 (Development)"    # Build date: Nov. 15, 2020
+version = "0.2.1"    # Build date: Nov. 15, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same.
 
 # Exit
@@ -31,33 +31,38 @@ def exitProgram():
 
 # Auto-updater
 def AutoUpdater():
-    def PullFromGitHub():
-        file = os.path.basename(__file__)
-        filename, ext = os.path.splitext(file)
-        if ext == ".py":
-            r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
-            text_file = open(file, "w")
-            text_file.write(r.text)
+    file = os.path.basename(__file__)
+    filename, ext = os.path.splitext(file)
+    if ext == ".py":
+        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
+        text_file = open(file, "w")
+        text_file.write(r.text)
+        if text_file != r.text:
             text_file.close()
-            updatergui.destroy()
-        elif ext == ".exe":
-            r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
-            text_file = open(file, "w")
-            text_file.write(r.text)
-            text_file.close()
-            updatergui.destroy()
+            updategui = tk.Tk()
+            updategui.geometry("512x96")
+            updategui.Title = "Update Available"
+            updatelbl = tk.Label(updategui, text = "An update is available! Please close this window and re-open the program.", font = ("Calibri", 12))
+            updatelbl.pack()
+            updategui.mainloop()
+            exitProgram()
         else:
-            print("Unable to update program.")
-            updatergui.destroy()
-    updatergui = tk.Tk()
-    updatergui.geometry("512x96")
-    updatergui.title("Auto Updater")
-    lbl = tk.Label(updatergui, text="Running auto-updater...", font=("Calibri", 12))
-    lbl.pack()
-    pullfromgithubthread = threading.Thread(target=PullFromGitHub)
-    pullfromgithubthread.start()
-    guimainloopthread = threading.Thread(target=updatergui.mainloop())
-    guimainloopthread.start()
+            text_file.close()
+    elif ext == ".exe":
+        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
+        text_file = open(file, "w")
+        text_file.write(r.text)
+        if text_file != r.text:
+            text_file.close()
+            updategui = tk.Tk()
+            updategui.geometry("512x96")
+            updategui.Title = "Update Available"
+            updatelbl = tk.Label(updategui, text = "An update is available! Please close this window and re-open the program.", font = ("Calibri", 12))
+            updatelbl.pack()
+            updategui.mainloop()
+            exitProgram()
+        else:
+            text_file.close()
 
 AutoUpdater()
 
