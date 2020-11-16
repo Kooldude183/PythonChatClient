@@ -31,31 +31,38 @@ def exitProgram():
 
 # Auto-updater
 def AutoUpdater():
-    print("Running auto-updater...")
-    file = os.path.basename(__file__)
-    filename, ext = os.path.splitext(file)
-    if ext == ".py":
-        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
-        text_file = open(file, "w")
-        text_file.write(r.text)
-        text_file.close()
-    elif ext == ".exe":
-        r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
-        text_file = open(file, "w")
-        text_file.write(r.text)
-        text_file.close()
-    else:
-        print("Unsupported file type. Unable to start program.")
-        print("Program will terminate in 5 seconds...")
-        time.sleep(5)
-        exitProgram()
+    def PullFromGitHub():
+        file = os.path.basename(__file__)
+        filename, ext = os.path.splitext(file)
+        if ext == ".py":
+            r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
+            text_file = open(file, "w")
+            text_file.write(r.text)
+            text_file.close()
+            updatergui.destroy()
+        elif ext == ".exe":
+            r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
+            text_file = open(file, "w")
+            text_file.write(r.text)
+            text_file.close()
+            updatergui.destroy()
+        else:
+            print("Unable to update program.")
+            updatergui.destroy()
+    updatergui = tk.Tk()
+    updatergui.geometry("512x96")
+    updatergui.title("Auto Updater")
+    lbl = tk.Label(updatergui, text="Running auto-updater...", font=("Calibri", 12))
+    lbl.pack()
+    pullfromgithubthread = threading.Thread(target=PullFromGitHub)
+    pullfromgithubthread.start()
+    guimainloopthread = threading.Thread(target=updatergui.mainloop())
+    guimainloopthread.start()
 
-#AutoUpdater()
+AutoUpdater()
 
 gui = tk.Tk()
 gui.geometry("500x200")
-
-print("Chat Client v" + str(version))
 
 def setUsername(event):
     global username
@@ -83,11 +90,22 @@ gui.mainloop()
 
 try:
     username_header
-except Exception as e:
-    print("Username was not specified! Please enter a username.")
-    print("Program will terminate in 5 seconds...")
-    time.sleep(5)
-    exitProgram()
+except:
+    def errExit():
+        time.sleep(5)
+        errorgui.destroy()
+        exitProgram()
+    errorgui = tk.Tk()
+    errorgui.geometry("512x96")
+    errorgui.title("Exception")
+    errorlbl = tk.Label(errorgui, text="Username was not specified! Please enter a username.", font=("Calibri", 12))
+    errorlbl.pack()
+    errorterminate = tk.Label(errorgui, text="Program will terminate in 5 seconds...", font=("Calibri", 12))
+    errorterminate.pack()
+    errexitthread = threading.Thread(target=errExit)
+    errexitthread.start()
+    errmainloopthread = threading.Thread(target=errorgui.mainloop())
+    errmainloopthread.start()
 
 def setServerMain():
     global serverip
@@ -122,6 +140,25 @@ otherserverbutton.pack()
 
 gui.mainloop()
 
+try:
+    serverip
+except:
+    def errExit():
+        time.sleep(5)
+        errorgui.destroy()
+        exitProgram()
+    errorgui = tk.Tk()
+    errorgui.geometry("512x96")
+    errorgui.title("Exception")
+    errorlbl = tk.Label(errorgui, text="Server IP address was not specified! Please enter an IP address.", font=("Calibri", 12))
+    errorlbl.pack()
+    errorterminate = tk.Label(errorgui, text="Program will terminate in 5 seconds...", font=("Calibri", 12))
+    errorterminate.pack()
+    errexitthread = threading.Thread(target=errExit)
+    errexitthread.start()
+    errmainloopthread = threading.Thread(target=errorgui.mainloop())
+    errmainloopthread.start()
+
 gui = tk.Tk()
 gui.title("Chat")
 gui.configure(bg = "#DEE2E3")
@@ -134,15 +171,6 @@ def Connect():
 
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    try:
-        serverip
-    except Exception as e:
-        listBox.insert(END, "Server IP address was not specified! Please enter an IP address.")
-        listBox.insert(END, "Program will terminate in 5 seconds...")
-        listBox.see("end")
-        time.sleep(5)
-        exitProgram()
 
     while True:
         try:
