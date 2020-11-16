@@ -19,7 +19,7 @@ import requests
 import os
 HEADER_LENGTH = 10
 
-version = "0.2.1"    # Build date: Nov. 15, 2020
+version = "0.2.2"    # Build date: Nov. 15, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same.
 
 # Exit
@@ -37,32 +37,12 @@ def AutoUpdater():
         r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/client.py')
         text_file = open(file, "w")
         text_file.write(r.text)
-        if text_file != r.text:
-            text_file.close()
-            updategui = tk.Tk()
-            updategui.geometry("512x96")
-            updategui.Title = "Update Available"
-            updatelbl = tk.Label(updategui, text = "An update is available! Please close this window and re-open the program.", font = ("Calibri", 12))
-            updatelbl.pack()
-            updategui.mainloop()
-            exitProgram()
-        else:
-            text_file.close()
+        text_file.close()
     elif ext == ".exe":
         r = requests.get('https://raw.githubusercontent.com/Kooldude183/PythonChatClient/main/dist/client.exe')
         text_file = open(file, "w")
         text_file.write(r.text)
-        if text_file != r.text:
-            text_file.close()
-            updategui = tk.Tk()
-            updategui.geometry("512x96")
-            updategui.Title = "Update Available"
-            updatelbl = tk.Label(updategui, text = "An update is available! Please close this window and re-open the program.", font = ("Calibri", 12))
-            updatelbl.pack()
-            updategui.mainloop()
-            exitProgram()
-        else:
-            text_file.close()
+        text_file.close()
 
 AutoUpdater()
 
