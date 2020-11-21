@@ -4,3 +4,4 @@ client.spec
 server.spec
 convert.bat
 dist\client.py
+.DS_Store
