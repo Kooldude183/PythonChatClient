@@ -19,7 +19,7 @@ import requests
 import os
 HEADER_LENGTH = 10
 
-version = "0.2.2"    # Build date: Nov. 15, 2020
+version = "0.2.3"    # Build date: Nov. 15, 2020
 protocolVersion = 12  # Do not change! Server and client protocol versions must be the same.
 
 # Exit
@@ -94,7 +94,7 @@ except:
 
 def setServerMain():
     global serverip
-    serverip = "104.156.229.228"
+    serverip = "us1.kdgaming.net"
     gui.destroy()
 
 def connectToOtherServer(address):
